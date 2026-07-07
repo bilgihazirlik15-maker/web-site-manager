@@ -31,6 +31,9 @@
   const searchInput = document.querySelector("#searchInput");
   const allButton = document.querySelector("#allButton");
   const favoriteButton = document.querySelector("#favoriteButton");
+  const hourHand = document.querySelector("#hourHand");
+  const minuteHand = document.querySelector("#minuteHand");
+  const secondHand = document.querySelector("#secondHand");
 
   form.addEventListener("submit", addSite);
   addSiteButton.addEventListener("click", openSiteModal);
@@ -58,6 +61,8 @@
   allButton.addEventListener("click", () => setFavoriteFilter(false));
   favoriteButton.addEventListener("click", () => setFavoriteFilter(true));
 
+  updateClock();
+  window.setInterval(updateClock, 1000);
   render();
 
   function loadSites() {
@@ -89,7 +94,9 @@
       name: String(formData.get("name")).trim(),
       url: normalizeUrl(String(formData.get("url")).trim()),
       group: String(formData.get("group")).trim() || "Genel",
-      favorite: false
+      favorite: false,
+      pinned: false,
+      pinnedAt: 0
     };
 
     if (!site.name || !site.url) return;
@@ -130,12 +137,14 @@
   }
 
   function renderList() {
-    const sites = state.sites.filter((site) => {
-      const haystack = `${site.name} ${site.url} ${site.group}`.toLowerCase();
-      const matchesFavorite = !state.onlyFavorites || site.favorite;
-      const matchesQuery = !state.query || haystack.includes(state.query);
-      return matchesFavorite && matchesQuery;
-    });
+    const sites = state.sites
+      .filter((site) => {
+        const haystack = `${site.name} ${site.url} ${site.group}`.toLowerCase();
+        const matchesFavorite = !state.onlyFavorites || site.favorite;
+        const matchesQuery = !state.query || haystack.includes(state.query);
+        return matchesFavorite && matchesQuery;
+      })
+      .sort(compareSites);
 
     list.innerHTML = "";
 
@@ -149,7 +158,7 @@
 
     sites.forEach((site) => {
       const row = document.createElement("div");
-      row.className = `site-row${site.id === state.activeId ? " active" : ""}`;
+      row.className = `site-row${site.id === state.activeId ? " active" : ""}${site.pinned ? " pinned" : ""}`;
       row.role = "button";
       row.tabIndex = 0;
       row.setAttribute("aria-label", `${site.name} sitesini ac`);
@@ -174,7 +183,24 @@
 
       const group = document.createElement("span");
       group.className = "site-group";
-      group.textContent = site.group;
+      group.textContent = site.pinned ? `${site.group} · Sabit` : site.group;
+
+      const actions = document.createElement("span");
+      actions.className = "site-actions";
+
+      const pin = document.createElement("button");
+      pin.type = "button";
+      pin.className = `pin-button${site.pinned ? " on" : ""}`;
+      pin.title = site.pinned ? "Sabitlemeyi kaldir" : "En uste sabitle";
+      pin.setAttribute("aria-label", site.pinned ? "Sabitlemeyi kaldir" : "En uste sabitle");
+      pin.textContent = "⌃";
+      pin.addEventListener("click", (event) => {
+        event.stopPropagation();
+        site.pinned = !site.pinned;
+        site.pinnedAt = site.pinned ? Date.now() : 0;
+        saveSites();
+        renderList();
+      });
 
       const favorite = document.createElement("button");
       favorite.type = "button";
@@ -190,9 +216,16 @@
       });
 
       main.append(name, group);
-      row.append(main, favorite);
+      actions.append(pin, favorite);
+      row.append(main, actions);
       list.append(row);
     });
+  }
+
+  function compareSites(a, b) {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    if (a.pinned && b.pinned) return Number(b.pinnedAt || 0) - Number(a.pinnedAt || 0);
+    return 0;
   }
 
   function renderActiveSite() {
@@ -330,7 +363,9 @@
       name,
       url: normalizeUrl(url),
       group: String(site.group || "Genel").trim() || "Genel",
-      favorite: Boolean(site.favorite)
+      favorite: Boolean(site.favorite),
+      pinned: Boolean(site.pinned),
+      pinnedAt: Number(site.pinnedAt || 0)
     };
   }
 
@@ -343,5 +378,16 @@
     allButton.classList.toggle("active", !enabled);
     favoriteButton.classList.toggle("active", enabled);
     renderList();
+  }
+
+  function updateClock() {
+    const now = new Date();
+    const seconds = now.getSeconds();
+    const minutes = now.getMinutes();
+    const hours = now.getHours() % 12;
+
+    secondHand.style.transform = `translateX(-50%) rotate(${seconds * 6}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${minutes * 6 + seconds * 0.1}deg)`;
+    hourHand.style.transform = `translateX(-50%) rotate(${hours * 30 + minutes * 0.5}deg)`;
   }
 })();
