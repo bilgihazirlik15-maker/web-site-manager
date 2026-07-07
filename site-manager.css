@@ -255,6 +255,7 @@ input:focus {
   max-width: 100%;
   min-height: 42px;
   border: 1px solid var(--line);
+  border-left-width: 6px;
   border-radius: 8px;
   padding: 5px 6px;
   background: #ffffff;
@@ -264,43 +265,43 @@ input:focus {
 }
 
 .site-row.tone-0 {
-  border-color: #a7d2c1;
-  background: #f5fbf8;
+  border-color: #0f8f6f;
+  background: #e7f7ef;
 }
 
 .site-row.tone-1 {
-  border-color: #e0c36d;
-  background: #fffaf0;
+  border-color: #c58500;
+  background: #fff1c7;
 }
 
 .site-row.tone-2 {
-  border-color: #b9c7ef;
-  background: #f5f7ff;
+  border-color: #3466d6;
+  background: #e8efff;
 }
 
 .site-row.tone-3 {
-  border-color: #e5b7b0;
-  background: #fff6f4;
+  border-color: #c94e3f;
+  background: #ffe9e5;
 }
 
 .site-row.tone-4 {
-  border-color: #b7d5ef;
-  background: #f1f8fd;
+  border-color: #0084a8;
+  background: #e3f7fc;
 }
 
 .site-row.tone-5 {
-  border-color: #d7c2eb;
-  background: #faf5ff;
+  border-color: #8b4ac9;
+  background: #f2e7ff;
 }
 
 .site-row.tone-6 {
-  border-color: #c9d7a5;
-  background: #f8fbf0;
+  border-color: #6d8f00;
+  background: #f0f8cf;
 }
 
 .site-row.tone-7 {
-  border-color: #e8c8a5;
-  background: #fff7ef;
+  border-color: #d35f00;
+  background: #ffead8;
 }
 
 .site-row.dragging {
