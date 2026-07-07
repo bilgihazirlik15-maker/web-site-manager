@@ -263,6 +263,46 @@ input:focus {
   cursor: pointer;
 }
 
+.site-row.tone-0 {
+  border-color: #a7d2c1;
+  background: #f5fbf8;
+}
+
+.site-row.tone-1 {
+  border-color: #e0c36d;
+  background: #fffaf0;
+}
+
+.site-row.tone-2 {
+  border-color: #b9c7ef;
+  background: #f5f7ff;
+}
+
+.site-row.tone-3 {
+  border-color: #e5b7b0;
+  background: #fff6f4;
+}
+
+.site-row.tone-4 {
+  border-color: #b7d5ef;
+  background: #f1f8fd;
+}
+
+.site-row.tone-5 {
+  border-color: #d7c2eb;
+  background: #faf5ff;
+}
+
+.site-row.tone-6 {
+  border-color: #c9d7a5;
+  background: #f8fbf0;
+}
+
+.site-row.tone-7 {
+  border-color: #e8c8a5;
+  background: #fff7ef;
+}
+
 .site-row.dragging {
   opacity: 0.58;
 }

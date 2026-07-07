@@ -170,9 +170,9 @@
       return;
     }
 
-    sites.forEach((site) => {
+    sites.forEach((site, index) => {
       const row = document.createElement("div");
-      row.className = `site-row${site.id === state.activeId ? " active" : ""}${site.pinned ? " pinned" : ""}`;
+      row.className = `site-row tone-${index % 8}${site.id === state.activeId ? " active" : ""}${site.pinned ? " pinned" : ""}`;
       row.role = "button";
       row.tabIndex = 0;
       row.draggable = true;
