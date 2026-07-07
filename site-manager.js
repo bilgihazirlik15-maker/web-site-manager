@@ -384,14 +384,18 @@
   function isLikelyFrameBlocked(url) {
     try {
       const hostname = new URL(url, window.location.href).hostname.replace(/^www\./, "");
-      const blockedHosts = new Set([
+      const blockedHosts = [
         "instagram.com",
         "facebook.com",
+        "linkedin.com",
         "threads.net",
         "x.com",
-        "twitter.com"
-      ]);
-      return blockedHosts.has(hostname);
+        "twitter.com",
+        "tiktok.com",
+        "netflix.com",
+        "primevideo.com"
+      ];
+      return blockedHosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
     } catch (error) {
       return false;
     }
