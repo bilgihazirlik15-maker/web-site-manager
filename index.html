@@ -55,6 +55,7 @@
           <div class="header-tools">
             <div class="actions">
               <button class="header-button" id="activeFavoriteButton" type="button">Favori yap</button>
+              <button class="header-button" id="editSiteButton" type="button">Düzenle</button>
               <button class="header-button" id="openNewTabButton" type="button">Yeni sekmede aç</button>
               <button class="header-button" id="removeButton" type="button">Sil</button>
             </div>
@@ -101,7 +102,7 @@
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-header">
           <div>
-            <p class="eyebrow">Yeni kayıt</p>
+            <p class="eyebrow" id="modalEyebrow">Yeni kayıt</p>
             <h2 id="modalTitle">Web sitesi ekle</h2>
           </div>
           <button class="icon-button" id="closeModalButton" type="button" title="Kapat" aria-label="Kapat">
@@ -111,7 +112,7 @@
 
         <form class="site-form" id="siteForm" autocomplete="off">
           <label>
-            Site adi
+            Site adı
             <input id="siteName" name="name" type="text" placeholder="Örn. Haber paneli" required />
           </label>
           <label>
@@ -124,7 +125,7 @@
           </label>
           <div class="modal-actions">
             <button class="secondary-button" id="cancelModalButton" type="button">Vazgeç</button>
-            <button class="primary-button" type="submit">Site ekle</button>
+            <button class="primary-button" id="submitSiteButton" type="submit">Site ekle</button>
           </div>
         </form>
       </section>

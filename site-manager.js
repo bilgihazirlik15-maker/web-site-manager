@@ -7,7 +7,8 @@
     activeId: null,
     onlyFavorites: false,
     query: "",
-    draggingId: null
+    draggingId: null,
+    editingId: null
   };
 
   const form = document.querySelector("#siteForm");
@@ -21,12 +22,16 @@
   const activeGroup = document.querySelector("#activeGroup");
   const openNewTabButton = document.querySelector("#openNewTabButton");
   const removeButton = document.querySelector("#removeButton");
+  const editSiteButton = document.querySelector("#editSiteButton");
   const activeFavoriteButton = document.querySelector("#activeFavoriteButton");
   const addSiteButton = document.querySelector("#addSiteButton");
   const importButton = document.querySelector("#importButton");
   const importFile = document.querySelector("#importFile");
   const exportButton = document.querySelector("#exportButton");
   const siteModal = document.querySelector("#siteModal");
+  const modalEyebrow = document.querySelector("#modalEyebrow");
+  const modalTitle = document.querySelector("#modalTitle");
+  const submitSiteButton = document.querySelector("#submitSiteButton");
   const closeModalButton = document.querySelector("#closeModalButton");
   const cancelModalButton = document.querySelector("#cancelModalButton");
   const searchInput = document.querySelector("#searchInput");
@@ -37,8 +42,8 @@
   const minuteHand = document.querySelector("#minuteHand");
   const secondHand = document.querySelector("#secondHand");
 
-  form.addEventListener("submit", addSite);
-  addSiteButton.addEventListener("click", openSiteModal);
+  form.addEventListener("submit", saveSiteFromForm);
+  addSiteButton.addEventListener("click", openAddSiteModal);
   closeModalButton.addEventListener("click", closeSiteModal);
   cancelModalButton.addEventListener("click", closeSiteModal);
   siteModal.addEventListener("click", (event) => {
@@ -52,6 +57,7 @@
   openNewTabButton.addEventListener("click", openActiveSite);
   blockedOpenButton.addEventListener("click", openActiveSite);
   removeButton.addEventListener("click", removeActiveSite);
+  editSiteButton.addEventListener("click", openEditSiteModal);
   activeFavoriteButton.addEventListener("click", toggleActiveFavorite);
   importButton.addEventListener("click", () => importFile.click());
   importFile.addEventListener("change", importSites);
@@ -88,25 +94,36 @@
     return `site-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
-  function addSite(event) {
+  function saveSiteFromForm(event) {
     event.preventDefault();
     const formData = new FormData(form);
-    const site = {
-      id: createId(),
+    const siteData = {
       name: String(formData.get("name")).trim(),
       url: normalizeUrl(String(formData.get("url")).trim()),
-      group: String(formData.get("group")).trim() || "Genel",
-      favorite: false,
-      pinned: false,
-      pinnedAt: 0,
-      order: getNextOrder()
+      group: String(formData.get("group")).trim() || "Genel"
     };
 
-    if (!site.name || !site.url) return;
+    if (!siteData.name || !siteData.url) return;
 
-    state.sites.unshift(site);
+    if (state.editingId) {
+      const site = state.sites.find((item) => item.id === state.editingId);
+      if (!site) return;
+      Object.assign(site, siteData);
+      state.activeId = site.id;
+    } else {
+      const site = {
+        id: createId(),
+        ...siteData,
+        favorite: false,
+        pinned: false,
+        pinnedAt: 0,
+        order: getNextOrder()
+      };
+      state.sites.unshift(site);
+      state.activeId = site.id;
+    }
+
     normalizeSiteOrder();
-    state.activeId = site.id;
     saveSites();
     form.reset();
     closeSiteModal();
@@ -121,6 +138,29 @@
     return `https://${url}`;
   }
 
+  function openAddSiteModal() {
+    state.editingId = null;
+    form.reset();
+    modalEyebrow.textContent = "Yeni kayıt";
+    modalTitle.textContent = "Web sitesi ekle";
+    submitSiteButton.textContent = "Site ekle";
+    openSiteModal();
+  }
+
+  function openEditSiteModal() {
+    const activeSite = state.sites.find((site) => site.id === state.activeId);
+    if (!activeSite) return;
+
+    state.editingId = activeSite.id;
+    form.elements.name.value = activeSite.name;
+    form.elements.url.value = activeSite.url;
+    form.elements.group.value = activeSite.group;
+    modalEyebrow.textContent = "Kayıt düzenle";
+    modalTitle.textContent = "Web sitesini düzenle";
+    submitSiteButton.textContent = "Değişiklikleri kaydet";
+    openSiteModal();
+  }
+
   function openSiteModal() {
     siteModal.classList.add("open");
     siteModal.setAttribute("aria-hidden", "false");
@@ -128,6 +168,7 @@
   }
 
   function closeSiteModal() {
+    state.editingId = null;
     siteModal.classList.remove("open");
     siteModal.setAttribute("aria-hidden", "true");
   }
@@ -350,6 +391,7 @@
 
     openNewTabButton.disabled = !hasSite;
     removeButton.disabled = !hasSite;
+    editSiteButton.disabled = !hasSite;
     activeFavoriteButton.disabled = !hasSite;
     frame.classList.toggle("loaded", hasSite);
     emptyState.classList.toggle("hidden", hasSite);

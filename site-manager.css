@@ -183,7 +183,7 @@ input:focus {
 }
 
 .header-button {
-  min-width: 104px;
+  min-width: 92px;
   border-color: var(--header-button-border);
   background: var(--header-button);
   color: #194637;
@@ -201,6 +201,11 @@ input:focus {
   border-color: var(--header-button-border);
   background: var(--header-button);
   color: #194637;
+}
+
+.header-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
 }
 
 .icon-button {
