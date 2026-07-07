@@ -129,9 +129,6 @@
   }
 
   function render() {
-    if (!state.activeId && state.sites.length) {
-      state.activeId = state.sites[0].id;
-    }
     renderList();
     renderActiveSite();
   }
@@ -305,7 +302,7 @@
     if (!confirmed) return;
 
     state.sites = state.sites.filter((site) => site.id !== activeSite.id);
-    state.activeId = state.sites[0]?.id || null;
+    state.activeId = null;
     saveSites();
     render();
   }
