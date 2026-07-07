@@ -13,6 +13,8 @@
   const list = document.querySelector("#siteList");
   const frame = document.querySelector("#siteFrame");
   const emptyState = document.querySelector("#emptyState");
+  const blockedState = document.querySelector("#blockedState");
+  const blockedOpenButton = document.querySelector("#blockedOpenButton");
   const activeTitle = document.querySelector("#activeTitle");
   const activeUrl = document.querySelector("#activeUrl");
   const activeGroup = document.querySelector("#activeGroup");
@@ -43,6 +45,7 @@
     }
   });
   openNewTabButton.addEventListener("click", openActiveSite);
+  blockedOpenButton.addEventListener("click", openActiveSite);
   removeButton.addEventListener("click", removeActiveSite);
   activeFavoriteButton.addEventListener("click", toggleActiveFavorite);
   importButton.addEventListener("click", () => importFile.click());
@@ -201,6 +204,7 @@
     activeFavoriteButton.disabled = !hasSite;
     frame.classList.toggle("loaded", hasSite);
     emptyState.classList.toggle("hidden", hasSite);
+    blockedState.classList.add("hidden");
 
     if (!activeSite) {
       activeTitle.textContent = "Bir site secin";
@@ -217,7 +221,31 @@
     activeGroup.textContent = activeSite.group;
     activeFavoriteButton.textContent = activeSite.favorite ? "Favoride" : "Favori yap";
     activeFavoriteButton.classList.toggle("on", activeSite.favorite);
+
+    if (isLikelyFrameBlocked(activeSite.url)) {
+      frame.classList.remove("loaded");
+      frame.removeAttribute("src");
+      blockedState.classList.remove("hidden");
+      return;
+    }
+
     frame.src = activeSite.url;
+  }
+
+  function isLikelyFrameBlocked(url) {
+    try {
+      const hostname = new URL(url, window.location.href).hostname.replace(/^www\./, "");
+      const blockedHosts = new Set([
+        "instagram.com",
+        "facebook.com",
+        "threads.net",
+        "x.com",
+        "twitter.com"
+      ]);
+      return blockedHosts.has(hostname);
+    } catch (error) {
+      return false;
+    }
   }
 
   function toggleActiveFavorite() {
