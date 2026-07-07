@@ -134,6 +134,7 @@ input:focus {
 .primary-button,
 .secondary-button,
 .danger-button,
+.header-button,
 .favorite-action,
 .icon-button,
 .toggle-button {
@@ -174,6 +175,26 @@ input:focus {
 .favorite-action.on {
   background: #8a6b18;
   color: #ffffff;
+}
+
+.header-button {
+  min-width: 104px;
+  border-color: var(--line);
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.header-button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.header-button.on {
+  border-color: #e5c463;
+  background: #fff8df;
+  color: #6f5512;
 }
 
 .icon-button {
@@ -338,6 +359,7 @@ input:focus {
 }
 
 .workspace-header {
+  position: relative;
   min-height: 74px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -367,19 +389,22 @@ input:focus {
 .header-tools {
   flex: 1;
   justify-content: flex-end;
-  gap: 18px;
+  gap: 0;
 }
 
 .header-tools .actions {
-  margin-left: auto;
-  margin-right: auto;
+  position: absolute;
+  left: 50%;
+  justify-content: center;
+  transform: translateX(-50%);
 }
 
 .analog-clock {
   position: relative;
-  width: 66px;
-  min-width: 66px;
-  height: 66px;
+  margin-left: auto;
+  width: 68px;
+  min-width: 68px;
+  height: 68px;
   border: 2px solid var(--line);
   border-radius: 50%;
   background:
@@ -582,6 +607,11 @@ iframe.loaded {
   .header-tools {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .header-tools .actions {
+    position: static;
+    transform: none;
   }
 
   .secondary-button,
