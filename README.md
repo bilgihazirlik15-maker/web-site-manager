@@ -17,6 +17,7 @@ Kayitli site listesi tarayicinin `localStorage` alaninda saklanir. Ilk surum kur
 - Site ekleme ve silme
 - Favori belirleme ve favorilere gore filtreleme
 - Site adi, adresi veya gruba gore arama
+- JSON dosyasindan site listesini ice aktarma
 - Site listesini JSON olarak disa aktarma
 - Sol panelde bagimsiz scroll
 - Secilen siteyi sag tarafta iframe ile gosterme

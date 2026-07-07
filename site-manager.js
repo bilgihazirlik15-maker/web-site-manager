@@ -20,6 +20,8 @@
   const removeButton = document.querySelector("#removeButton");
   const activeFavoriteButton = document.querySelector("#activeFavoriteButton");
   const addSiteButton = document.querySelector("#addSiteButton");
+  const importButton = document.querySelector("#importButton");
+  const importFile = document.querySelector("#importFile");
   const exportButton = document.querySelector("#exportButton");
   const siteModal = document.querySelector("#siteModal");
   const closeModalButton = document.querySelector("#closeModalButton");
@@ -43,6 +45,8 @@
   openNewTabButton.addEventListener("click", openActiveSite);
   removeButton.addEventListener("click", removeActiveSite);
   activeFavoriteButton.addEventListener("click", toggleActiveFavorite);
+  importButton.addEventListener("click", () => importFile.click());
+  importFile.addEventListener("change", importSites);
   exportButton.addEventListener("click", exportSites);
   searchInput.addEventListener("input", () => {
     state.query = searchInput.value.trim().toLowerCase();
@@ -252,6 +256,58 @@
     link.download = "web-site-listesi.json";
     link.click();
     URL.revokeObjectURL(link.href);
+  }
+
+  function importSites(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      try {
+        const imported = JSON.parse(String(reader.result || "[]"));
+        if (!Array.isArray(imported)) throw new Error("Invalid site list");
+
+        const normalizedSites = imported.map(normalizeImportedSite).filter(Boolean);
+        const existingKeys = new Set(state.sites.map(createSiteKey));
+        const newSites = normalizedSites.filter((site) => {
+          const key = createSiteKey(site);
+          if (existingKeys.has(key)) return false;
+          existingKeys.add(key);
+          return true;
+        });
+
+        state.sites = [...newSites, ...state.sites];
+        state.activeId = newSites[0]?.id || state.activeId;
+        saveSites();
+        render();
+        window.alert(`${newSites.length} site ice aktarildi.`);
+      } catch (error) {
+        window.alert("Site listesi ice aktarilamadi. JSON dosyasini kontrol edin.");
+      } finally {
+        importFile.value = "";
+      }
+    });
+    reader.readAsText(file);
+  }
+
+  function normalizeImportedSite(site) {
+    if (!site || typeof site !== "object") return null;
+    const name = String(site.name || "").trim();
+    const url = String(site.url || "").trim();
+    if (!name || !url) return null;
+
+    return {
+      id: createId(),
+      name,
+      url: normalizeUrl(url),
+      group: String(site.group || "Genel").trim() || "Genel",
+      favorite: Boolean(site.favorite)
+    };
+  }
+
+  function createSiteKey(site) {
+    return `${site.name.trim().toLowerCase()}|${site.url.trim().toLowerCase()}`;
   }
 
   function setFavoriteFilter(enabled) {
