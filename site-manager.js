@@ -6,7 +6,8 @@
     sites: loadSites(),
     activeId: null,
     onlyFavorites: false,
-    query: ""
+    query: "",
+    draggingId: null
   };
 
   const form = document.querySelector("#siteForm");
@@ -97,12 +98,14 @@
       group: String(formData.get("group")).trim() || "Genel",
       favorite: false,
       pinned: false,
-      pinnedAt: 0
+      pinnedAt: 0,
+      order: getNextOrder()
     };
 
     if (!site.name || !site.url) return;
 
     state.sites.unshift(site);
+    normalizeSiteOrder();
     state.activeId = site.id;
     saveSites();
     form.reset();
@@ -172,11 +175,18 @@
       row.className = `site-row${site.id === state.activeId ? " active" : ""}${site.pinned ? " pinned" : ""}`;
       row.role = "button";
       row.tabIndex = 0;
+      row.draggable = true;
+      row.dataset.siteId = site.id;
       row.setAttribute("aria-label", `${site.name} sitesini aç`);
       row.addEventListener("click", () => {
         state.activeId = site.id;
         render();
       });
+      row.addEventListener("dragstart", (event) => startSiteDrag(event, site.id));
+      row.addEventListener("dragover", (event) => moveSiteDrag(event, site.id));
+      row.addEventListener("dragleave", () => row.classList.remove("drop-before", "drop-after"));
+      row.addEventListener("drop", (event) => dropSite(event, site.id));
+      row.addEventListener("dragend", endSiteDrag);
       row.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
@@ -209,8 +219,9 @@
         event.stopPropagation();
         site.pinned = !site.pinned;
         site.pinnedAt = site.pinned ? Date.now() : 0;
+        site.order = getTopOrder(site.pinned);
         saveSites();
-        renderList();
+        render();
       });
 
       const favorite = document.createElement("button");
@@ -235,8 +246,102 @@
 
   function compareSites(a, b) {
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    if (a.pinned && b.pinned) return Number(b.pinnedAt || 0) - Number(a.pinnedAt || 0);
-    return 0;
+    return Number(a.order || 0) - Number(b.order || 0);
+  }
+
+  function startSiteDrag(event, siteId) {
+    if (event.target instanceof Element && event.target.closest("button")) {
+      event.preventDefault();
+      return;
+    }
+
+    state.draggingId = siteId;
+    event.currentTarget.classList.add("dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", siteId);
+  }
+
+  function moveSiteDrag(event, targetId) {
+    if (!state.draggingId || state.draggingId === targetId) return;
+
+    event.preventDefault();
+    const targetRow = event.currentTarget;
+    const position = getDropPosition(event, targetRow);
+    targetRow.classList.toggle("drop-before", position === "before");
+    targetRow.classList.toggle("drop-after", position === "after");
+  }
+
+  function dropSite(event, targetId) {
+    event.preventDefault();
+    clearDropMarkers();
+
+    const draggedId = state.draggingId || event.dataTransfer.getData("text/plain");
+    if (!draggedId || draggedId === targetId) return;
+
+    const targetRow = event.currentTarget;
+    const position = getDropPosition(event, targetRow);
+    reorderSites(draggedId, targetId, position);
+    state.draggingId = null;
+    render();
+  }
+
+  function endSiteDrag(event) {
+    event.currentTarget.classList.remove("dragging");
+    state.draggingId = null;
+    clearDropMarkers();
+  }
+
+  function getDropPosition(event, row) {
+    const rect = row.getBoundingClientRect();
+    return event.clientY < rect.top + rect.height / 2 ? "before" : "after";
+  }
+
+  function clearDropMarkers() {
+    list.querySelectorAll(".drop-before, .drop-after, .dragging").forEach((row) => {
+      row.classList.remove("drop-before", "drop-after", "dragging");
+    });
+  }
+
+  function reorderSites(draggedId, targetId, position) {
+    const ordered = [...state.sites].sort(compareSites);
+    const dragged = ordered.find((site) => site.id === draggedId);
+    const target = ordered.find((site) => site.id === targetId);
+    if (!dragged || !target) return;
+
+    dragged.pinned = target.pinned;
+    if (!dragged.pinned) dragged.pinnedAt = 0;
+
+    const withoutDragged = ordered.filter((site) => site.id !== draggedId);
+    const targetIndex = withoutDragged.findIndex((site) => site.id === targetId);
+    const insertIndex = position === "after" ? targetIndex + 1 : targetIndex;
+    withoutDragged.splice(insertIndex, 0, dragged);
+
+    withoutDragged.forEach((site, index) => {
+      site.order = index;
+      if (site.pinned && !site.pinnedAt) {
+        site.pinnedAt = Date.now();
+      }
+    });
+
+    state.sites = withoutDragged;
+    saveSites();
+  }
+
+  function normalizeSiteOrder() {
+    state.sites
+      .sort(compareSites)
+      .forEach((site, index) => {
+        site.order = index;
+      });
+  }
+
+  function getNextOrder() {
+    return Math.min(0, ...state.sites.map((site) => Number(site.order || 0))) - 1;
+  }
+
+  function getTopOrder(pinned) {
+    const matchingSites = state.sites.filter((site) => Boolean(site.pinned) === Boolean(pinned));
+    return Math.min(0, ...matchingSites.map((site) => Number(site.order || 0))) - 1;
   }
 
   function renderActiveSite() {
@@ -376,7 +481,8 @@
       group: String(site.group || "Genel").trim() || "Genel",
       favorite: Boolean(site.favorite),
       pinned: Boolean(site.pinned),
-      pinnedAt: Number(site.pinnedAt || 0)
+      pinnedAt: Number(site.pinnedAt || 0),
+      order: Number(site.order || 0)
     };
   }
 

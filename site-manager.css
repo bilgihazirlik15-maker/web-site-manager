@@ -246,6 +246,7 @@ input:focus {
 }
 
 .site-row {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -260,6 +261,29 @@ input:focus {
   text-align: left;
   box-shadow: 0 5px 14px rgba(20, 30, 28, 0.045);
   cursor: pointer;
+}
+
+.site-row.dragging {
+  opacity: 0.58;
+}
+
+.site-row.drop-before::before,
+.site-row.drop-after::after {
+  position: absolute;
+  right: 8px;
+  left: 8px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+  content: "";
+}
+
+.site-row.drop-before::before {
+  top: -4px;
+}
+
+.site-row.drop-after::after {
+  bottom: -4px;
 }
 
 .site-row.active {
