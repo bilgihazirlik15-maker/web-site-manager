@@ -29,6 +29,7 @@
   const closeModalButton = document.querySelector("#closeModalButton");
   const cancelModalButton = document.querySelector("#cancelModalButton");
   const searchInput = document.querySelector("#searchInput");
+  const categoryOptions = document.querySelector("#categoryOptions");
   const allButton = document.querySelector("#allButton");
   const favoriteButton = document.querySelector("#favoriteButton");
   const hourHand = document.querySelector("#hourHand");
@@ -129,8 +130,21 @@
   }
 
   function render() {
+    renderCategoryOptions();
     renderList();
     renderActiveSite();
+  }
+
+  function renderCategoryOptions() {
+    const groups = [...new Set(state.sites.map((site) => site.group).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "tr"));
+
+    categoryOptions.innerHTML = "";
+    groups.forEach((group) => {
+      const option = document.createElement("option");
+      option.value = group;
+      categoryOptions.append(option);
+    });
   }
 
   function renderList() {
