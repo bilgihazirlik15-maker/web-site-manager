@@ -318,6 +318,14 @@ input:focus {
   box-shadow: var(--shadow);
 }
 
+.workspace-header #activeGroup,
+.workspace-header #activeUrl {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .actions {
   flex-wrap: wrap;
   justify-content: flex-end;

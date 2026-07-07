@@ -165,10 +165,6 @@
       name.className = "site-name";
       name.textContent = site.name;
 
-      const url = document.createElement("span");
-      url.className = "site-url";
-      url.textContent = site.url;
-
       const group = document.createElement("span");
       group.className = "site-group";
       group.textContent = site.group;
@@ -186,7 +182,7 @@
         renderList();
       });
 
-      main.append(name, url, group);
+      main.append(name, group);
       row.append(main, favorite);
       list.append(row);
     });
