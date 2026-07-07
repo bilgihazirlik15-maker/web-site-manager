@@ -1,0 +1,267 @@
+(function () {
+  const storageKey = "site-manager-sites";
+  const fallbackSites = [];
+
+  const state = {
+    sites: loadSites(),
+    activeId: null,
+    onlyFavorites: false,
+    query: ""
+  };
+
+  const form = document.querySelector("#siteForm");
+  const list = document.querySelector("#siteList");
+  const frame = document.querySelector("#siteFrame");
+  const emptyState = document.querySelector("#emptyState");
+  const activeTitle = document.querySelector("#activeTitle");
+  const activeUrl = document.querySelector("#activeUrl");
+  const activeGroup = document.querySelector("#activeGroup");
+  const openNewTabButton = document.querySelector("#openNewTabButton");
+  const removeButton = document.querySelector("#removeButton");
+  const activeFavoriteButton = document.querySelector("#activeFavoriteButton");
+  const addSiteButton = document.querySelector("#addSiteButton");
+  const exportButton = document.querySelector("#exportButton");
+  const siteModal = document.querySelector("#siteModal");
+  const closeModalButton = document.querySelector("#closeModalButton");
+  const cancelModalButton = document.querySelector("#cancelModalButton");
+  const searchInput = document.querySelector("#searchInput");
+  const allButton = document.querySelector("#allButton");
+  const favoriteButton = document.querySelector("#favoriteButton");
+
+  form.addEventListener("submit", addSite);
+  addSiteButton.addEventListener("click", openSiteModal);
+  closeModalButton.addEventListener("click", closeSiteModal);
+  cancelModalButton.addEventListener("click", closeSiteModal);
+  siteModal.addEventListener("click", (event) => {
+    if (event.target === siteModal) closeSiteModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && siteModal.classList.contains("open")) {
+      closeSiteModal();
+    }
+  });
+  openNewTabButton.addEventListener("click", openActiveSite);
+  removeButton.addEventListener("click", removeActiveSite);
+  activeFavoriteButton.addEventListener("click", toggleActiveFavorite);
+  exportButton.addEventListener("click", exportSites);
+  searchInput.addEventListener("input", () => {
+    state.query = searchInput.value.trim().toLowerCase();
+    renderList();
+  });
+  allButton.addEventListener("click", () => setFavoriteFilter(false));
+  favoriteButton.addEventListener("click", () => setFavoriteFilter(true));
+
+  render();
+
+  function loadSites() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      if (!Array.isArray(stored)) return fallbackSites;
+      return stored.filter((site) => site.name !== "BILGI Envanter Taslagi" || site.url !== "preview.html");
+    } catch (error) {
+      return fallbackSites;
+    }
+  }
+
+  function saveSites() {
+    localStorage.setItem(storageKey, JSON.stringify(state.sites));
+  }
+
+  function createId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return `site-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
+  function addSite(event) {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const site = {
+      id: createId(),
+      name: String(formData.get("name")).trim(),
+      url: normalizeUrl(String(formData.get("url")).trim()),
+      group: String(formData.get("group")).trim() || "Genel",
+      favorite: false
+    };
+
+    if (!site.name || !site.url) return;
+
+    state.sites.unshift(site);
+    state.activeId = site.id;
+    saveSites();
+    form.reset();
+    closeSiteModal();
+    render();
+  }
+
+  function normalizeUrl(url) {
+    const isLocal = url.endsWith(".html") || url.startsWith("./") || url.startsWith("/") || url.startsWith("localhost") || url.startsWith("127.0.0.1");
+    const hasProtocol = /^[a-z]+:\/\//i.test(url);
+
+    if (hasProtocol || isLocal) return url;
+    return `https://${url}`;
+  }
+
+  function openSiteModal() {
+    siteModal.classList.add("open");
+    siteModal.setAttribute("aria-hidden", "false");
+    document.querySelector("#siteName").focus();
+  }
+
+  function closeSiteModal() {
+    siteModal.classList.remove("open");
+    siteModal.setAttribute("aria-hidden", "true");
+  }
+
+  function render() {
+    if (!state.activeId && state.sites.length) {
+      state.activeId = state.sites[0].id;
+    }
+    renderList();
+    renderActiveSite();
+  }
+
+  function renderList() {
+    const sites = state.sites.filter((site) => {
+      const haystack = `${site.name} ${site.url} ${site.group}`.toLowerCase();
+      const matchesFavorite = !state.onlyFavorites || site.favorite;
+      const matchesQuery = !state.query || haystack.includes(state.query);
+      return matchesFavorite && matchesQuery;
+    });
+
+    list.innerHTML = "";
+
+    if (!sites.length) {
+      const empty = document.createElement("p");
+      empty.className = "site-url";
+      empty.textContent = "Bu filtreye uyan site yok.";
+      list.append(empty);
+      return;
+    }
+
+    sites.forEach((site) => {
+      const row = document.createElement("div");
+      row.className = `site-row${site.id === state.activeId ? " active" : ""}`;
+      row.role = "button";
+      row.tabIndex = 0;
+      row.setAttribute("aria-label", `${site.name} sitesini ac`);
+      row.addEventListener("click", () => {
+        state.activeId = site.id;
+        render();
+      });
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          state.activeId = site.id;
+          render();
+        }
+      });
+
+      const main = document.createElement("span");
+      main.className = "site-main";
+
+      const name = document.createElement("span");
+      name.className = "site-name";
+      name.textContent = site.name;
+
+      const url = document.createElement("span");
+      url.className = "site-url";
+      url.textContent = site.url;
+
+      const group = document.createElement("span");
+      group.className = "site-group";
+      group.textContent = site.group;
+
+      const favorite = document.createElement("button");
+      favorite.type = "button";
+      favorite.className = `favorite${site.favorite ? " on" : ""}`;
+      favorite.title = site.favorite ? "Favorilerden cikar" : "Favori yap";
+      favorite.setAttribute("aria-label", site.favorite ? "Favorilerden cikar" : "Favori yap");
+      favorite.innerHTML = `<span aria-hidden="true">${site.favorite ? "★" : "☆"}</span><span class="favorite-label">Favori</span>`;
+      favorite.addEventListener("click", (event) => {
+        event.stopPropagation();
+        site.favorite = !site.favorite;
+        saveSites();
+        renderList();
+      });
+
+      main.append(name, url, group);
+      row.append(main, favorite);
+      list.append(row);
+    });
+  }
+
+  function renderActiveSite() {
+    const activeSite = state.sites.find((site) => site.id === state.activeId);
+    const hasSite = Boolean(activeSite);
+
+    openNewTabButton.disabled = !hasSite;
+    removeButton.disabled = !hasSite;
+    activeFavoriteButton.disabled = !hasSite;
+    frame.classList.toggle("loaded", hasSite);
+    emptyState.classList.toggle("hidden", hasSite);
+
+    if (!activeSite) {
+      activeTitle.textContent = "Bir site secin";
+      activeUrl.textContent = "Soldaki listeden site acabilir veya yeni site ekleyebilirsiniz.";
+      activeGroup.textContent = "Hazir";
+      activeFavoriteButton.textContent = "Favori yap";
+      activeFavoriteButton.classList.remove("on");
+      frame.removeAttribute("src");
+      return;
+    }
+
+    activeTitle.textContent = activeSite.name;
+    activeUrl.textContent = activeSite.url;
+    activeGroup.textContent = activeSite.group;
+    activeFavoriteButton.textContent = activeSite.favorite ? "Favoride" : "Favori yap";
+    activeFavoriteButton.classList.toggle("on", activeSite.favorite);
+    frame.src = activeSite.url;
+  }
+
+  function toggleActiveFavorite() {
+    const activeSite = state.sites.find((site) => site.id === state.activeId);
+    if (!activeSite) return;
+
+    activeSite.favorite = !activeSite.favorite;
+    saveSites();
+    render();
+  }
+
+  function openActiveSite() {
+    const activeSite = state.sites.find((site) => site.id === state.activeId);
+    if (activeSite) {
+      window.open(activeSite.url, "_blank", "noopener,noreferrer");
+    }
+  }
+
+  function removeActiveSite() {
+    const activeSite = state.sites.find((site) => site.id === state.activeId);
+    if (!activeSite) return;
+
+    const confirmed = window.confirm(`${activeSite.name} listesinden silinsin mi?`);
+    if (!confirmed) return;
+
+    state.sites = state.sites.filter((site) => site.id !== activeSite.id);
+    state.activeId = state.sites[0]?.id || null;
+    saveSites();
+    render();
+  }
+
+  function exportSites() {
+    const blob = new Blob([JSON.stringify(state.sites, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "web-site-listesi.json";
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  function setFavoriteFilter(enabled) {
+    state.onlyFavorites = enabled;
+    allButton.classList.toggle("active", !enabled);
+    favoriteButton.classList.toggle("active", enabled);
+    renderList();
+  }
+})();

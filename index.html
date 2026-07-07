@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web Site Yoneticisi</title>
+    <link rel="stylesheet" href="site-manager.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Web sitesi listesi">
+        <div class="brand">
+          <div>
+            <p class="eyebrow">Bagimsiz panel</p>
+            <h1>Web Site Yoneticisi</h1>
+          </div>
+          <div class="brand-actions">
+            <button class="icon-button" id="addSiteButton" type="button" title="Site ekle" aria-label="Site ekle">
+              <span aria-hidden="true">+</span>
+            </button>
+            <button class="icon-button" id="exportButton" type="button" title="Listeyi disa aktar" aria-label="Listeyi disa aktar">
+              <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="filters">
+          <label class="search">
+            <span>Ara</span>
+            <input id="searchInput" type="search" placeholder="Ad, adres veya grup" />
+          </label>
+          <div class="view-toggle" role="group" aria-label="Gorunum secimi">
+            <button class="toggle-button active" id="allButton" type="button">Tumu</button>
+            <button class="toggle-button" id="favoriteButton" type="button">Favoriler</button>
+          </div>
+        </div>
+
+        <section class="site-list" id="siteList" aria-label="Kayitli siteler"></section>
+      </aside>
+
+      <section class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p class="eyebrow" id="activeGroup">Hazir</p>
+            <h2 id="activeTitle">Bir site secin</h2>
+            <p id="activeUrl">Soldaki listeden site acabilir veya yeni site ekleyebilirsiniz.</p>
+          </div>
+          <div class="actions">
+            <button class="favorite-action" id="activeFavoriteButton" type="button">Favori yap</button>
+            <button class="secondary-button" id="openNewTabButton" type="button">Yeni sekmede ac</button>
+            <button class="danger-button" id="removeButton" type="button">Sil</button>
+          </div>
+        </header>
+
+        <div class="browser-frame">
+          <iframe id="siteFrame" title="Secili web sitesi" sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"></iframe>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-mark">⌂</div>
+            <h3>Tek panelden coklu site calistirin</h3>
+            <p>Kaydettiginiz siteler bu alanda acilir. Liste bilgisayariniza kaydedilir.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="siteModal" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Yeni kayit</p>
+            <h2 id="modalTitle">Web sitesi ekle</h2>
+          </div>
+          <button class="icon-button" id="closeModalButton" type="button" title="Kapat" aria-label="Kapat">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <form class="site-form" id="siteForm" autocomplete="off">
+          <label>
+            Site adi
+            <input id="siteName" name="name" type="text" placeholder="Orn. Haber paneli" required />
+          </label>
+          <label>
+            Site adresi
+            <input id="siteUrl" name="url" type="url" placeholder="https://example.com" required />
+          </label>
+          <label>
+            Grup
+            <input id="siteGroup" name="group" type="text" placeholder="Is, okul, araclar..." />
+          </label>
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancelModalButton" type="button">Vazgec</button>
+            <button class="primary-button" type="submit">Site ekle</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="site-manager.js"></script>
+  </body>
+</html>
