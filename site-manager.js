@@ -172,7 +172,7 @@
       row.className = `site-row${site.id === state.activeId ? " active" : ""}${site.pinned ? " pinned" : ""}`;
       row.role = "button";
       row.tabIndex = 0;
-      row.setAttribute("aria-label", `${site.name} sitesini ac`);
+      row.setAttribute("aria-label", `${site.name} sitesini aç`);
       row.addEventListener("click", () => {
         state.activeId = site.id;
         render();
@@ -202,8 +202,8 @@
       const pin = document.createElement("button");
       pin.type = "button";
       pin.className = `pin-button${site.pinned ? " on" : ""}`;
-      pin.title = site.pinned ? "Sabitlemeyi kaldir" : "En uste sabitle";
-      pin.setAttribute("aria-label", site.pinned ? "Sabitlemeyi kaldir" : "En uste sabitle");
+      pin.title = site.pinned ? "Sabitlemeyi kaldır" : "En üste sabitle";
+      pin.setAttribute("aria-label", site.pinned ? "Sabitlemeyi kaldır" : "En üste sabitle");
       pin.textContent = "⌃";
       pin.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -216,8 +216,8 @@
       const favorite = document.createElement("button");
       favorite.type = "button";
       favorite.className = `favorite${site.favorite ? " on" : ""}`;
-      favorite.title = site.favorite ? "Favorilerden cikar" : "Favori yap";
-      favorite.setAttribute("aria-label", site.favorite ? "Favorilerden cikar" : "Favori yap");
+      favorite.title = site.favorite ? "Favorilerden çıkar" : "Favori yap";
+      favorite.setAttribute("aria-label", site.favorite ? "Favorilerden çıkar" : "Favori yap");
       favorite.innerHTML = `<span aria-hidden="true">${site.favorite ? "★" : "☆"}</span><span class="favorite-label">Favori</span>`;
       favorite.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -251,9 +251,9 @@
     blockedState.classList.add("hidden");
 
     if (!activeSite) {
-      activeTitle.textContent = "Bir site secin";
-      activeUrl.textContent = "Soldaki listeden site acabilir veya yeni site ekleyebilirsiniz.";
-      activeGroup.textContent = "Hazir";
+      activeTitle.textContent = "Bir site seçin";
+      activeUrl.textContent = "Soldaki listeden site açabilir veya yeni site ekleyebilirsiniz.";
+      activeGroup.textContent = "Hazır";
       activeFavoriteButton.textContent = "Favori yap";
       activeFavoriteButton.classList.remove("on");
       frame.removeAttribute("src");
@@ -353,9 +353,9 @@
         state.activeId = newSites[0]?.id || state.activeId;
         saveSites();
         render();
-        window.alert(`${newSites.length} site ice aktarildi.`);
+        window.alert(`${newSites.length} site içe aktarıldı.`);
       } catch (error) {
-        window.alert("Site listesi ice aktarilamadi. JSON dosyasini kontrol edin.");
+        window.alert("Site listesi içe aktarılamadı. JSON dosyasını kontrol edin.");
       } finally {
         importFile.value = "";
       }

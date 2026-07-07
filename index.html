@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Web Site Yoneticisi</title>
+    <title>Web Site Yöneticisi</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="apple-touch-icon" href="favicon.png" />
     <link rel="stylesheet" href="site-manager.css" />
@@ -13,17 +13,17 @@
       <aside class="sidebar" aria-label="Web sitesi listesi">
         <div class="brand">
           <div>
-            <p class="eyebrow">Bagimsiz panel</p>
-            <h1>Web Site Yoneticisi</h1>
+            <p class="eyebrow">Bağımsız panel</p>
+            <h1>Web Site Yöneticisi</h1>
           </div>
           <div class="brand-actions">
             <button class="icon-button" id="addSiteButton" type="button" title="Site ekle" aria-label="Site ekle">
               <span aria-hidden="true">+</span>
             </button>
-            <button class="icon-button" id="importButton" type="button" title="Listeyi ice aktar" aria-label="Listeyi ice aktar">
+            <button class="icon-button" id="importButton" type="button" title="Listeyi içe aktar" aria-label="Listeyi içe aktar">
               <span aria-hidden="true">↑</span>
             </button>
-            <button class="icon-button" id="exportButton" type="button" title="Listeyi disa aktar" aria-label="Listeyi disa aktar">
+            <button class="icon-button" id="exportButton" type="button" title="Listeyi dışa aktar" aria-label="Listeyi dışa aktar">
               <span aria-hidden="true">↓</span>
             </button>
             <input id="importFile" type="file" accept="application/json,.json" hidden />
@@ -33,29 +33,29 @@
         <div class="filters">
           <label class="search">
             <span>Ara</span>
-            <input id="searchInput" type="search" list="categoryOptions" placeholder="Kategori sec veya ara" />
+            <input id="searchInput" type="search" list="categoryOptions" placeholder="Kategori seç veya ara" />
             <datalist id="categoryOptions"></datalist>
           </label>
-          <div class="view-toggle" role="group" aria-label="Gorunum secimi">
-            <button class="toggle-button active" id="allButton" type="button">Tumu</button>
+          <div class="view-toggle" role="group" aria-label="Görünüm seçimi">
+            <button class="toggle-button active" id="allButton" type="button">Tümü</button>
             <button class="toggle-button" id="favoriteButton" type="button">Favoriler</button>
           </div>
         </div>
 
-        <section class="site-list" id="siteList" aria-label="Kayitli siteler"></section>
+        <section class="site-list" id="siteList" aria-label="Kayıtlı siteler"></section>
       </aside>
 
       <section class="workspace">
         <header class="workspace-header">
           <div>
-            <p class="eyebrow" id="activeGroup">Hazir</p>
-            <h2 id="activeTitle">Bir site secin</h2>
-            <p id="activeUrl">Soldaki listeden site acabilir veya yeni site ekleyebilirsiniz.</p>
+            <p class="eyebrow" id="activeGroup">Hazır</p>
+            <h2 id="activeTitle">Bir site seçin</h2>
+            <p id="activeUrl">Soldaki listeden site açabilir veya yeni site ekleyebilirsiniz.</p>
           </div>
           <div class="header-tools">
             <div class="actions">
               <button class="header-button" id="activeFavoriteButton" type="button">Favori yap</button>
-              <button class="header-button" id="openNewTabButton" type="button">Yeni sekmede ac</button>
+              <button class="header-button" id="openNewTabButton" type="button">Yeni sekmede aç</button>
               <button class="header-button" id="removeButton" type="button">Sil</button>
             </div>
             <div class="analog-clock" aria-label="Analog saat">
@@ -71,9 +71,9 @@
           <iframe id="siteFrame" title="Secili web sitesi" sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"></iframe>
           <div class="blocked-state hidden" id="blockedState">
             <div class="blocked-mark">!</div>
-            <h3>Bu site panel icinde acilamiyor</h3>
-            <p>Instagram gibi bazi siteler guvenlik nedeniyle iframe icinde calismayi engeller.</p>
-            <button class="secondary-button" id="blockedOpenButton" type="button">Yeni sekmede ac</button>
+            <h3>Bu site panel içinde açılamıyor</h3>
+            <p>Instagram gibi bazı siteler güvenlik nedeniyle iframe içinde çalışmayı engeller.</p>
+            <button class="secondary-button" id="blockedOpenButton" type="button">Yeni sekmede aç</button>
           </div>
           <div class="empty-state" id="emptyState">
             <div class="welcome-visual" aria-hidden="true">
@@ -101,7 +101,7 @@
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-header">
           <div>
-            <p class="eyebrow">Yeni kayit</p>
+            <p class="eyebrow">Yeni kayıt</p>
             <h2 id="modalTitle">Web sitesi ekle</h2>
           </div>
           <button class="icon-button" id="closeModalButton" type="button" title="Kapat" aria-label="Kapat">
@@ -112,7 +112,7 @@
         <form class="site-form" id="siteForm" autocomplete="off">
           <label>
             Site adi
-            <input id="siteName" name="name" type="text" placeholder="Orn. Haber paneli" required />
+            <input id="siteName" name="name" type="text" placeholder="Örn. Haber paneli" required />
           </label>
           <label>
             Site adresi
@@ -120,10 +120,10 @@
           </label>
           <label>
             Grup
-            <input id="siteGroup" name="group" type="text" placeholder="Is, okul, araclar..." />
+            <input id="siteGroup" name="group" type="text" placeholder="İş, okul, araçlar..." />
           </label>
           <div class="modal-actions">
-            <button class="secondary-button" id="cancelModalButton" type="button">Vazgec</button>
+            <button class="secondary-button" id="cancelModalButton" type="button">Vazgeç</button>
             <button class="primary-button" type="submit">Site ekle</button>
           </div>
         </form>

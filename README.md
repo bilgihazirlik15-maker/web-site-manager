@@ -1,29 +1,29 @@
-# Web Site Yoneticisi
+# Web Site Yöneticisi
 
-Tek bir arayuz uzerinden birden cok web sitesini kaydetmek, listelemek, favorilemek, silmek ve secilen siteyi sag taraftaki iframe alaninda calistirmak icin hazirlanan bagimsiz panel.
+Tek bir arayüz üzerinden birden çok web sitesini kaydetmek, listelemek, favorilemek, silmek ve seçilen siteyi sağ taraftaki iframe alanında çalıştırmak için hazırlanan bağımsız panel.
 
-## Kullanim
+## Kullanım
 
-1. `index.html` dosyasini acin.
-2. Sol ustteki `+` dugmesiyle yeni web sitesi ekleyin.
-3. Sol listeden bir site secin.
-4. Secilen site sag tarafta iframe icinde acilir.
-5. Iframe icinde acilmayi reddeden siteler icin `Yeni sekmede ac` dugmesini kullanin.
+1. `index.html` dosyasını açın.
+2. Sol üstteki `+` düğmesiyle yeni web sitesi ekleyin.
+3. Sol listeden bir site seçin.
+4. Seçilen site sağ tarafta iframe içinde açılır.
+5. Iframe içinde açılmayı reddeden siteler için `Yeni sekmede aç` düğmesini kullanın.
 
-Kayitli site listesi tarayicinin `localStorage` alaninda saklanir. Ilk surum kurulum veya sunucu gerektirmeden calisir.
+Kayıtlı site listesi tarayıcının `localStorage` alanında saklanır. İlk sürüm kurulum veya sunucu gerektirmeden çalışır.
 
-## Ozellikler
+## Özellikler
 
 - Site ekleme ve silme
-- Favori belirleme ve favorilere gore filtreleme
-- Site adi, adresi veya gruba gore arama
-- JSON dosyasindan site listesini ice aktarma
-- Site listesini JSON olarak disa aktarma
-- Sol panelde bagimsiz scroll
-- Secilen siteyi sag tarafta iframe ile gosterme
+- Favori belirleme ve favorilere göre filtreleme
+- Site adı, adresi veya gruba göre arama
+- JSON dosyasından site listesini içe aktarma
+- Site listesini JSON olarak dışa aktarma
+- Sol panelde bağımsız scroll
+- Seçilen siteyi sağ tarafta iframe ile gösterme
 
 ## Dosyalar
 
 - `index.html`: Ana arayuz
-- `site-manager.css`: Gorsel tasarim
-- `site-manager.js`: Uygulama davranislari
+- `site-manager.css`: Görsel tasarım
+- `site-manager.js`: Uygulama davranışları
