@@ -427,6 +427,11 @@
     try {
       const hostname = new URL(url, window.location.href).hostname.replace(/^www\./, "");
       const blockedHosts = [
+        "google.com",
+        "google.com.tr",
+        "bing.com",
+        "yahoo.com",
+        "duckduckgo.com",
         "instagram.com",
         "facebook.com",
         "linkedin.com",
