@@ -62,6 +62,7 @@
   importButton.addEventListener("click", () => importFile.click());
   importFile.addEventListener("change", importSites);
   exportButton.addEventListener("click", exportSites);
+  frame.addEventListener("error", showBlockedSiteFallback);
   searchInput.addEventListener("input", () => {
     state.query = searchInput.value.trim().toLowerCase();
     renderList();
@@ -421,6 +422,14 @@
     }
 
     frame.src = activeSite.url;
+  }
+
+  function showBlockedSiteFallback() {
+    if (!state.activeId) return;
+
+    frame.classList.remove("loaded");
+    frame.removeAttribute("src");
+    blockedState.classList.remove("hidden");
   }
 
   function isLikelyFrameBlocked(url) {
