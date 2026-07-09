@@ -443,6 +443,7 @@
         "duckduckgo.com",
         "sis.bilgi.edu.tr",
         "learn.bilgi.edu.tr",
+        "sharepoint.com",
         "instagram.com",
         "facebook.com",
         "linkedin.com",
