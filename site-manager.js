@@ -442,6 +442,7 @@
         "yahoo.com",
         "duckduckgo.com",
         "sis.bilgi.edu.tr",
+        "learn.bilgi.edu.tr",
         "instagram.com",
         "facebook.com",
         "linkedin.com",
