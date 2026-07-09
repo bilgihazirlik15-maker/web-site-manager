@@ -16,6 +16,8 @@
   const frame = document.querySelector("#siteFrame");
   const emptyState = document.querySelector("#emptyState");
   const blockedState = document.querySelector("#blockedState");
+  const blockedTitle = blockedState.querySelector("h3");
+  const blockedDescription = blockedState.querySelector("p");
   const blockedOpenButton = document.querySelector("#blockedOpenButton");
   const activeTitle = document.querySelector("#activeTitle");
   const activeUrl = document.querySelector("#activeUrl");
@@ -132,11 +134,23 @@
   }
 
   function normalizeUrl(url) {
+    if (isWindowsLocalPath(url)) return toFileUrl(url);
+
     const isLocal = url.endsWith(".html") || url.startsWith("./") || url.startsWith("/") || url.startsWith("localhost") || url.startsWith("127.0.0.1");
     const hasProtocol = /^[a-z]+:\/\//i.test(url);
 
     if (hasProtocol || isLocal) return url;
     return `https://${url}`;
+  }
+
+  function isWindowsLocalPath(url) {
+    return /^[a-z]:[\\/]/i.test(url) || /^\\\\[^\\]+\\[^\\]+/.test(url);
+  }
+
+  function toFileUrl(path) {
+    const normalizedPath = path.replace(/\\/g, "/");
+    const filePath = normalizedPath.startsWith("//") ? normalizedPath : `/${normalizedPath}`;
+    return encodeURI(`file://${filePath}`);
   }
 
   function openAddSiteModal() {
@@ -414,10 +428,15 @@
     activeFavoriteButton.textContent = activeSite.favorite ? "Favoride" : "Favori yap";
     activeFavoriteButton.classList.toggle("on", activeSite.favorite);
 
+    if (isLocalFileUrl(activeSite.url)) {
+      showLocalFileFallback();
+      return;
+    }
+
     if (isLikelyFrameBlocked(activeSite.url)) {
       frame.classList.remove("loaded");
       frame.removeAttribute("src");
-      blockedState.classList.remove("hidden");
+      showBlockedSiteFallback();
       return;
     }
 
@@ -429,7 +448,23 @@
 
     frame.classList.remove("loaded");
     frame.removeAttribute("src");
+    blockedTitle.textContent = "Bu site panel içinde açılamıyor";
+    blockedDescription.textContent = "Bu site güvenlik ayarları nedeniyle burada gömülü açılmıyor. Geçici karşılama sayfasından yeni sekmede devam edebilirsiniz.";
+    blockedOpenButton.textContent = "Yeni sekmede aç";
     blockedState.classList.remove("hidden");
+  }
+
+  function showLocalFileFallback() {
+    frame.classList.remove("loaded");
+    frame.removeAttribute("src");
+    blockedTitle.textContent = "Yerel dosya panel içinde açılamıyor";
+    blockedDescription.textContent = "Tarayıcı güvenliği nedeniyle bu bilgisayardaki dosya veya yazılım otomatik çalıştırılamaz. Aç butonu dosyayı yeni sekmede açmayı dener; engellenirse yolu kopyalayıp Windows Gezgini'ne yapıştırın.";
+    blockedOpenButton.textContent = "Yerel dosyayı aç";
+    blockedState.classList.remove("hidden");
+  }
+
+  function isLocalFileUrl(url) {
+    return /^file:\/\//i.test(url);
   }
 
   function isLikelyFrameBlocked(url) {
