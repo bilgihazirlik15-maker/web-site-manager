@@ -1,4 +1,4 @@
-# Web Site Yöneticisi
+# Web Site Manager
 
 Tek bir arayüz üzerinden birden çok web sitesini kaydetmek, listelemek, favorilemek, silmek ve seçilen siteyi sağ taraftaki iframe alanında çalıştırmak için hazırlanan bağımsız panel.
 
