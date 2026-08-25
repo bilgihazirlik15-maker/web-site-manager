@@ -57,7 +57,15 @@
             <p class="eyebrow">Kayıtlı bağlantılar</p>
             <h2 id="collectionTitle">Web siteleri</h2>
           </div>
-          <p>Kartı seçtiğinizde bağlantı yeni sekmede açılır.</p>
+          <div class="selection-panel" aria-label="Seçili site işlemleri">
+            <p id="selectedSiteLabel">İşlem yapmak için bir kart seçin.</p>
+            <div class="selection-actions">
+              <button class="selection-button" id="selectedPinButton" type="button" disabled>Sabitle</button>
+              <button class="selection-button" id="selectedFavoriteButton" type="button" disabled>Favori</button>
+              <button class="selection-button" id="selectedEditButton" type="button" disabled>Düzenle</button>
+              <button class="selection-button danger" id="selectedRemoveButton" type="button" disabled>Sil</button>
+            </div>
+          </div>
         </div>
         <section class="site-list" id="siteList" aria-label="Kayıtlı siteler"></section>
       </section>

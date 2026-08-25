@@ -1,6 +1,6 @@
 (function () {
   const storageKey = "site-manager-sites";
-  const state = { sites: loadSites(), onlyFavorites: false, query: "", draggingId: null, editingId: null };
+  const state = { sites: loadSites(), selectedId: null, onlyFavorites: false, query: "", draggingId: null, editingId: null };
   const $ = (selector) => document.querySelector(selector);
   const form = $("#siteForm");
   const list = $("#siteList");
@@ -20,6 +20,10 @@
   searchInput.addEventListener("input", () => { state.query = searchInput.value.trim().toLowerCase(); renderList(); });
   $("#allButton").addEventListener("click", () => setFavoriteFilter(false));
   $("#favoriteButton").addEventListener("click", () => setFavoriteFilter(true));
+  $("#selectedPinButton").addEventListener("click", toggleSelectedPin);
+  $("#selectedFavoriteButton").addEventListener("click", toggleSelectedFavorite);
+  $("#selectedEditButton").addEventListener("click", editSelectedSite);
+  $("#selectedRemoveButton").addEventListener("click", removeSelectedSite);
 
   updateClock();
   setInterval(updateClock, 1000);
@@ -73,7 +77,7 @@
 
   function openModal() { modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); $("#siteName").focus(); }
   function closeModal() { state.editingId = null; form.reset(); modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
-  function render() { renderCategories(); renderList(); }
+  function render() { renderCategories(); renderList(); renderSelectionPanel(); }
 
   function renderCategories() {
     const datalist = $("#categoryOptions"); datalist.innerHTML = "";
@@ -98,11 +102,11 @@
 
   function createCard(site, index) {
     const card = document.createElement("article");
-    card.className = `site-card tone-${index % 8}${site.pinned ? " pinned" : ""}`;
+    card.className = `site-card tone-${index % 8}${site.pinned ? " pinned" : ""}${site.id === state.selectedId ? " selected" : ""}`;
     card.tabIndex = 0; card.draggable = true; card.dataset.siteId = site.id;
     card.setAttribute("aria-label", `${site.name} sitesini yeni sekmede aç`);
-    card.addEventListener("click", () => openSite(site));
-    card.addEventListener("keydown", (event) => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); openSite(site); } });
+    card.addEventListener("click", () => selectAndOpenSite(site));
+    card.addEventListener("keydown", (event) => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); selectAndOpenSite(site); } });
     card.addEventListener("dragstart", (event) => startDrag(event, site.id));
     card.addEventListener("dragover", (event) => { if (state.draggingId && state.draggingId !== site.id) { event.preventDefault(); card.classList.add("drop-target"); } });
     card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
@@ -115,27 +119,39 @@
     top.append(group, launch);
     const name = document.createElement("h3"); name.className = "site-name"; name.textContent = site.name;
     const url = document.createElement("p"); url.className = "site-url"; url.textContent = site.url;
-    const actions = document.createElement("div"); actions.className = "site-actions";
-    actions.append(
-      action(site.pinned ? "⌃ Sabit" : "⌃ Sabitle", site.pinned ? "on" : "", (event) => togglePin(event, site)),
-      action(site.favorite ? "★ Favori" : "☆ Favori", site.favorite ? "on" : "", (event) => toggleFavorite(event, site)),
-      action("Düzenle", "", (event) => { event.stopPropagation(); openEditModal(site); }),
-      action("Sil", "danger", (event) => removeSite(event, site))
-    );
-    card.append(top, name, url, actions); return card;
+    card.append(top, name, url); return card;
   }
 
-  function action(label, className, handler) {
-    const button = document.createElement("button"); button.type = "button"; button.className = `card-action ${className}`.trim(); button.textContent = label;
-    button.addEventListener("click", handler); return button;
+  function selectAndOpenSite(site) {
+    state.selectedId = site.id;
+    renderList();
+    renderSelectionPanel();
+    window.open(site.url, "_blank", "noopener,noreferrer");
   }
 
-  function openSite(site) { window.open(site.url, "_blank", "noopener,noreferrer"); }
-  function togglePin(event, site) { event.stopPropagation(); site.pinned = !site.pinned; site.pinnedAt = site.pinned ? Date.now() : 0; site.order = topOrder(site.pinned); saveSites(); render(); }
-  function toggleFavorite(event, site) { event.stopPropagation(); site.favorite = !site.favorite; saveSites(); renderList(); }
-  function removeSite(event, site) {
-    event.stopPropagation(); if (!confirm(`${site.name} listesinden silinsin mi?`)) return;
-    state.sites = state.sites.filter((item) => item.id !== site.id); saveSites(); render();
+  function getSelectedSite() { return state.sites.find((site) => site.id === state.selectedId); }
+  function renderSelectionPanel() {
+    const site = getSelectedSite();
+    const buttons = [$("#selectedPinButton"), $("#selectedFavoriteButton"), $("#selectedEditButton"), $("#selectedRemoveButton")];
+    buttons.forEach((button) => { button.disabled = !site; });
+    $("#selectedSiteLabel").textContent = site ? `Seçili: ${site.name}` : "İşlem yapmak için bir kart seçin.";
+    $("#selectedPinButton").textContent = site?.pinned ? "Sabitlemeyi kaldır" : "Sabitle";
+    $("#selectedFavoriteButton").textContent = site?.favorite ? "Favoriden çıkar" : "Favori";
+    $("#selectedPinButton").classList.toggle("on", Boolean(site?.pinned));
+    $("#selectedFavoriteButton").classList.toggle("on", Boolean(site?.favorite));
+  }
+  function toggleSelectedPin() {
+    const site = getSelectedSite(); if (!site) return;
+    site.pinned = !site.pinned; site.pinnedAt = site.pinned ? Date.now() : 0; site.order = topOrder(site.pinned); saveSites(); render();
+  }
+  function toggleSelectedFavorite() {
+    const site = getSelectedSite(); if (!site) return;
+    site.favorite = !site.favorite; saveSites(); render();
+  }
+  function editSelectedSite() { const site = getSelectedSite(); if (site) openEditModal(site); }
+  function removeSelectedSite() {
+    const site = getSelectedSite(); if (!site || !confirm(`${site.name} listesinden silinsin mi?`)) return;
+    state.sites = state.sites.filter((item) => item.id !== site.id); state.selectedId = null; saveSites(); render();
   }
   function compareSites(a, b) { return a.pinned !== b.pinned ? (a.pinned ? -1 : 1) : Number(a.order || 0) - Number(b.order || 0); }
   function topOrder(pinned) { return Math.min(0, ...state.sites.filter((site) => Boolean(site.pinned) === Boolean(pinned)).map((site) => Number(site.order || 0))) - 1; }
