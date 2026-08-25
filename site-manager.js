@@ -1,6 +1,6 @@
 (function () {
   const storageKey = "site-manager-sites";
-  const state = { sites: loadSites(), selectedId: null, onlyFavorites: false, query: "", draggingId: null, editingId: null };
+  const state = { sites: loadSites(), selectedId: null, onlyFavorites: false, query: "", draggingId: null, suppressOpen: false, editingId: null };
   const $ = (selector) => document.querySelector(selector);
   const form = $("#siteForm");
   const list = $("#siteList");
@@ -114,15 +114,19 @@
     card.addEventListener("dragend", clearDrag);
 
     const top = document.createElement("div"); top.className = "card-top";
+    const groupWrap = document.createElement("span"); groupWrap.className = "group-wrap";
+    const grip = document.createElement("span"); grip.className = "drag-grip"; grip.textContent = "⠿"; grip.title = "Sıralamak için sürükleyin"; grip.setAttribute("aria-hidden", "true");
     const group = document.createElement("span"); group.className = "site-group"; group.textContent = site.pinned ? `${site.group} · Sabit` : site.group;
+    groupWrap.append(grip, group);
     const launch = document.createElement("span"); launch.className = "launch-mark"; launch.textContent = "↗"; launch.setAttribute("aria-hidden", "true");
-    top.append(group, launch);
+    top.append(groupWrap, launch);
     const name = document.createElement("h3"); name.className = "site-name"; name.textContent = site.name;
     const url = document.createElement("p"); url.className = "site-url"; url.textContent = site.url;
     card.append(top, name, url); return card;
   }
 
   function selectAndOpenSite(site) {
+    if (state.suppressOpen) return;
     state.selectedId = site.id;
     renderList();
     renderSelectionPanel();
@@ -159,7 +163,7 @@
 
   function startDrag(event, id) {
     if (event.target.closest("button")) { event.preventDefault(); return; }
-    state.draggingId = id; event.currentTarget.classList.add("dragging"); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", id);
+    state.draggingId = id; state.suppressOpen = true; event.currentTarget.classList.add("dragging"); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", id);
   }
   function dropCard(event, targetId) {
     event.preventDefault(); const draggedId = state.draggingId || event.dataTransfer.getData("text/plain"); clearDrag();
@@ -169,7 +173,11 @@
     const remaining = ordered.filter((site) => site.id !== draggedId); remaining.splice(remaining.findIndex((site) => site.id === targetId), 0, dragged);
     state.sites = remaining; normalizeOrder(); saveSites(); render();
   }
-  function clearDrag() { state.draggingId = null; list.querySelectorAll(".dragging,.drop-target").forEach((card) => card.classList.remove("dragging", "drop-target")); }
+  function clearDrag() {
+    state.draggingId = null;
+    list.querySelectorAll(".dragging,.drop-target").forEach((card) => card.classList.remove("dragging", "drop-target"));
+    window.setTimeout(() => { state.suppressOpen = false; }, 180);
+  }
 
   function exportSites() {
     const blob = new Blob([JSON.stringify(state.sites, null, 2)], { type: "application/json" }); const link = document.createElement("a");
