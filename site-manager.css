@@ -93,8 +93,10 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31, 122, 9
   border-radius: 12px;
   padding: 10px 12px 8px;
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--tone) 9%, transparent) 0 1.5px, transparent 1.8px) 0 0 / 18px 18px,
-    repeating-linear-gradient(135deg, transparent 0 20px, color-mix(in srgb, var(--tone) 3%, transparent) 20px 21px),
+    linear-gradient(30deg, color-mix(in srgb, var(--tone) 5%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--tone) 5%, transparent) 87.5%) 0 0 / 34px 58px,
+    linear-gradient(150deg, color-mix(in srgb, var(--tone) 5%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--tone) 5%, transparent) 87.5%) 0 0 / 34px 58px,
+    linear-gradient(30deg, color-mix(in srgb, var(--tone) 4%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--tone) 4%, transparent) 87.5%) 17px 29px / 34px 58px,
+    linear-gradient(150deg, color-mix(in srgb, var(--tone) 4%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--tone) 4%, transparent) 87.5%) 17px 29px / 34px 58px,
     linear-gradient(145deg, #fff 0 44%, var(--tone-bg) 100%);
   box-shadow: 0 12px 0 -6px color-mix(in srgb, var(--tone) 42%, transparent), 0 15px 24px rgba(20, 30, 28, .11);
   cursor: grab;
