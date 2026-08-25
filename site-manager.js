@@ -171,7 +171,8 @@
     const ordered = [...state.sites].sort(compareSites); const dragged = ordered.find((site) => site.id === draggedId); const target = ordered.find((site) => site.id === targetId);
     if (!dragged || !target) return; dragged.pinned = target.pinned; if (!dragged.pinned) dragged.pinnedAt = 0;
     const remaining = ordered.filter((site) => site.id !== draggedId); remaining.splice(remaining.findIndex((site) => site.id === targetId), 0, dragged);
-    state.sites = remaining; normalizeOrder(); saveSites(); render();
+    remaining.forEach((site, index) => { site.order = index; });
+    state.sites = remaining; saveSites(); render();
   }
   function clearDrag() {
     state.draggingId = null;
