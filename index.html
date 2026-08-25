@@ -10,7 +10,7 @@
   </head>
   <body>
     <main class="app-shell">
-      <aside class="sidebar" aria-label="Web sitesi listesi">
+      <header class="topbar">
         <div class="brand">
           <div>
             <p class="eyebrow">Bağımsız panel</p>
@@ -30,71 +30,36 @@
           </div>
         </div>
 
-        <div class="filters">
-          <label class="search">
-            <span>Ara</span>
-            <input id="searchInput" type="search" list="categoryOptions" placeholder="Kategori seç veya ara" />
-            <datalist id="categoryOptions"></datalist>
-          </label>
-          <div class="view-toggle" role="group" aria-label="Görünüm seçimi">
-            <button class="toggle-button active" id="allButton" type="button">Tümü</button>
-            <button class="toggle-button" id="favoriteButton" type="button">Favoriler</button>
+        <div class="toolbar">
+          <div class="filters">
+            <label class="search">
+              <span>Ara</span>
+              <input id="searchInput" type="search" list="categoryOptions" placeholder="Kategori seç veya ara" />
+              <datalist id="categoryOptions"></datalist>
+            </label>
+            <div class="view-toggle" role="group" aria-label="Görünüm seçimi">
+              <button class="toggle-button active" id="allButton" type="button">Tümü</button>
+              <button class="toggle-button" id="favoriteButton" type="button">Favoriler</button>
+            </div>
+          </div>
+          <div class="analog-clock" aria-label="Analog saat">
+            <span class="clock-hand hour-hand" id="hourHand"></span>
+            <span class="clock-hand minute-hand" id="minuteHand"></span>
+            <span class="clock-hand second-hand" id="secondHand"></span>
+            <span class="clock-center"></span>
           </div>
         </div>
+      </header>
 
-        <section class="site-list" id="siteList" aria-label="Kayıtlı siteler"></section>
-      </aside>
-
-      <section class="workspace">
-        <header class="workspace-header">
+      <section class="card-workspace" aria-labelledby="collectionTitle">
+        <div class="section-heading">
           <div>
-            <p class="eyebrow" id="activeGroup">Hazır</p>
-            <h2 id="activeTitle">Bir site seçin</h2>
-            <p id="activeUrl">Soldaki listeden site açabilir veya yeni site ekleyebilirsiniz.</p>
+            <p class="eyebrow">Kayıtlı bağlantılar</p>
+            <h2 id="collectionTitle">Web siteleri</h2>
           </div>
-          <div class="header-tools">
-            <div class="actions">
-              <button class="header-button" id="activeFavoriteButton" type="button">Favori yap</button>
-              <button class="header-button" id="editSiteButton" type="button">Düzenle</button>
-              <button class="header-button" id="openNewTabButton" type="button">Yeni sekmede aç</button>
-              <button class="header-button" id="removeButton" type="button">Sil</button>
-            </div>
-            <div class="analog-clock" aria-label="Analog saat">
-              <span class="clock-hand hour-hand" id="hourHand"></span>
-              <span class="clock-hand minute-hand" id="minuteHand"></span>
-              <span class="clock-hand second-hand" id="secondHand"></span>
-              <span class="clock-center"></span>
-            </div>
-          </div>
-        </header>
-
-        <div class="browser-frame">
-          <iframe id="siteFrame" title="Secili web sitesi" sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"></iframe>
-          <div class="blocked-state hidden" id="blockedState">
-            <div class="blocked-mark">!</div>
-            <h3>Bu site panel içinde açılamıyor</h3>
-            <p>Bu site güvenlik ayarları nedeniyle burada gömülü açılmıyor. Geçici karşılama sayfasından yeni sekmede devam edebilirsiniz.</p>
-            <button class="secondary-button" id="blockedOpenButton" type="button">Yeni sekmede aç</button>
-          </div>
-          <div class="empty-state" id="emptyState">
-            <div class="welcome-visual" aria-hidden="true">
-              <div class="welcome-window">
-                <span></span>
-                <span></span>
-                <span></span>
-                <div class="welcome-glow"></div>
-              </div>
-              <div class="welcome-orbit"></div>
-            </div>
-            <h3>Nobody is on stage yet</h3>
-            <p>Pick a site from the left, and I will try to open it politely on the right. Some sites dislike iframes, so we give them the VIP treatment in a new tab.</p>
-            <div class="welcome-tips" aria-label="Quick tips">
-              <span>+ add a site</span>
-              <span>⌃ pin to top</span>
-              <span>☆ mark favorite</span>
-            </div>
-          </div>
+          <p>Kartı seçtiğinizde bağlantı yeni sekmede açılır.</p>
         </div>
+        <section class="site-list" id="siteList" aria-label="Kayıtlı siteler"></section>
       </section>
     </main>
 
@@ -131,6 +96,6 @@
       </section>
     </div>
 
-    <script src="site-manager.js?v=20260709-4"></script>
+    <script src="site-manager.js?v=20260825-1"></script>
   </body>
 </html>
